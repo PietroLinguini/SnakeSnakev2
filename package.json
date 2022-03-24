@@ -1,0 +1,15 @@
+{
+  "name": "snakeysnake",
+  "version": "1.0.0",
+  "description": "A simple snake game",
+  "default": "index.html",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "PietroLinguini",
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.3.2"
+  }
+}
