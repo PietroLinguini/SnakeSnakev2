@@ -33,8 +33,8 @@ class BoardView {
   }
 
   /**
-   * Returns the ID for the div element specified by the {@link arr} argument.
-   * @param {Array} arr An array of length 2. The first element of the array is the row and the second element is the column.
+   * Returns the ID for the div element specified by {@link arr}.
+   * @param {[row: Number, column: Number]} arr An array. The first element of the array is the row and the second element is the column.
    * @returns {string} A string in the form "box__ROW-COLUMN".
    */
   #getBoxId(arr) {
@@ -51,10 +51,11 @@ class BoardView {
 
   /**
    * Renders a snake on the board. If {@link clear} is set to true, it will clear a pre-existing snake instead.
-   * @param {*} snake An object containing a snake.
+   * @param {{head: [row: number, column: number], body: number[]}} snake An object containing a snake.
    * @param {boolean} clear A boolean determining whether to render a snake or clear a pre-existing snake.
    */
   renderSnake(snake, clear = false) {
+    console.log(snake);
     const boxes = [snake.head];
     boxes
       .map(arr => this.#getBoxId(arr))

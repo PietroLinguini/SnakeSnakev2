@@ -6,31 +6,31 @@ import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
 function handleStartGame() {
   model.createSnake();
 
-  boardView.renderSnake(model.state.snake);
+  boardView.renderSnake(model.SNAKE);
   boardView.togglePlayButton();
 }
 
 function handleMovement(e) {
-  boardView.renderSnake(model.state.snake, (clear = true));
+  boardView.renderSnake(model.SNAKE, true);
   switch (e.key) {
     case "w":
     case "ArrowUp":
-      move(model.state.snake, "up");
+      move(model.SNAKE, "up");
       break;
     case "a":
     case "ArrowLeft":
-      move(model.state.snake, "left");
+      move(model.SNAKE, "left");
       break;
     case "s":
     case "ArrowDown":
-      move(model.state.snake, "down");
+      move(model.SNAKE, "down");
       break;
     case "d":
     case "ArrowRight":
-      move(model.state.snake, "right");
+      move(model.SNAKE, "right");
       break;
   }
-  boardView.renderSnake(model.state.snake);
+  boardView.renderSnake(model.SNAKE);
 }
 
 function move(snake, dir) {
