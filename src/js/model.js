@@ -11,20 +11,16 @@ export const state = {
 export const { snake: SNAKE, food: FOOD } = state.board;
 
 /**
- * The set of "empty" grid spaces. A grid space is empty if it does not have part of a snake body in it, or if it does not contain food in it. One based for CSS Grid.
- * @type {Set<Number[]>}
+ * @type {[rows: number[]]}
  */
-const emptySpaces = new Set();
-for (let i = 1; i <= ROW_COUNT; i++) {
-  for (let k = 1; k <= COLUMN_COUNT; k++) {
-    emptySpaces.add([i, k]);
-  }
-}
+const emptySpaces = Array(ROW_COUNT).fill(
+  [...Array(COLUMN_COUNT).keys()].map(i => i + 1)
+);
 
 /**
  * @param {Number} fromTop How far the top margin should be from the top. 0 by default.
  * @param {Number} fromBottom How far the bottom margin should be from the bottom. 0 by default.
- * @returns A random valid row from the board between the bottom and top margins.
+ * @returns A random valid row from the board within the bottom and top margins.
  */
 const getRandomRow = (fromTop = 0, fromBottom = 0) =>
   randomInt(1 + fromTop, ROW_COUNT - fromBottom);
@@ -32,7 +28,7 @@ const getRandomRow = (fromTop = 0, fromBottom = 0) =>
 /**
  * @param {Number} fromLeft How far the left margin should be from the left. 0 by default.
  * @param {Number} fromRight How far the right margin should be from the right. 0 by default.
- * @returns A random valid column from the board between the left and right margins.
+ * @returns A random valid column from the board within the left and right margins.
  */
 const getRandomColumn = (fromLeft = 0, fromRight = 0) =>
   randomInt(1 + fromLeft, COLUMN_COUNT - fromRight);
@@ -43,7 +39,7 @@ const getRandomColumn = (fromLeft = 0, fromRight = 0) =>
  * @param {Number} fromTop How far the top margin should be from the top. 0 by default.
  * @param {Number} fromBottom How far the bottom margin should be from the bottom. 0 by default.
  * @param {Boolean} empty Whether or not the grid space should be empty; specifically, whether or not {@link emptySpaces} should contain the grid space. True by default.
- * @returns A random valid grid space from the board between the left, right, top, and bottom margins.
+ * @returns A random valid grid space from the board within the left, right, top, and bottom margins.
  */
 const getRandomGridSpace = (
   fromLeft = 0,
@@ -51,21 +47,45 @@ const getRandomGridSpace = (
   fromTop = 0,
   fromBottom = 0,
   empty = true
-) =>
-  empty
-    ? getRandomElement(Array.from(emptySpaces.values()))
-    : [getRandomRow(fromTop, fromBottom), getRandomColumn(fromLeft, fromRight)];
+) => {
+  if (empty) {
+    const row = getRandomElement(
+      Array.from(emptySpaces.keys()).slice(fromTop, ROW_COUNT - fromLeft)
+    );
+
+    const column = getRandomElement(
+      emptySpaces[row].slice(fromLeft, COLUMN_COUNT - fromRight)
+    );
+
+    return [row, column];
+  } else
+    return [
+      getRandomRow(fromTop, fromBottom),
+      getRandomColumn(fromLeft, fromRight),
+    ];
+};
 
 /**
- * Marks a grid space as "filled", or "empty" if {@link empty} is true. Specifically, it will remove the grid space from {@link emptySpaces}, or add to it if {@link empty} is true.
+ * Marks a grid space as "filled", or "empty" if {@link markAsEmpty} is true. Specifically, it will remove the grid space from {@link emptySpaces}, or add to it if {@link markAsEmpty} is true.
  * @param {[row: Number, column: Number]} space An array whose first element is the row number and second element is the column number.
- * @param {Boolean} empty True by default.
+ * @param {Boolean} markAsEmpty False by default.
  */
-function markGridSpace(space, empty = false) {
+function markGridSpace(space, markAsEmpty = false) {
   const { row, column } = space;
+
+  if (markAsEmpty) {
+    emptySpaces[row].push(column);
+    emptySpaces.sort();
+  } else {
+    emptySpaces[row].splice(emptySpaces[row].indexOf(column), 1);
+  }
 }
 
-export function createSnake() {
+/**
+ * Initializes a snake ({@link state.board.snake})
+ */
+export function initSnake() {
   SNAKE.head = getRandomGridSpace();
+  markGridSpace(SNAKE.head);
   SNAKE.body = [];
 }

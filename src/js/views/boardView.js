@@ -52,7 +52,7 @@ class BoardView {
   /**
    * Renders a snake on the board. If {@link clear} is set to true, it will clear a pre-existing snake instead.
    * @param {{head: [row: number, column: number], body: number[]}} snake An object containing a snake.
-   * @param {boolean} clear A boolean determining whether to render a snake or clear a pre-existing snake.
+   * @param {boolean} clear A boolean determining whether to render a snake or clear a pre-existing snake. False by default.
    */
   renderSnake(snake, clear = false) {
     console.log(snake);

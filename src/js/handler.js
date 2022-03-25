@@ -4,7 +4,7 @@ import { randomInt } from "./helper.js";
 import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
 
 function handleStartGame() {
-  model.createSnake();
+  model.initSnake();
 
   boardView.renderSnake(model.SNAKE);
   boardView.togglePlayButton();
