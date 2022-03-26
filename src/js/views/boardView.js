@@ -1,5 +1,5 @@
 import { ROW_COUNT, COLUMN_COUNT } from "../config.js";
-import { randomInt } from "../helper.js";
+import { parseBox } from "../helper.js";
 
 const BOX_CLASSES = ["snake__head", "snake", "food"];
 
@@ -24,6 +24,10 @@ class BoardView {
 
   addHandlerMovement(handler) {
     document.addEventListener("keydown", handler);
+  }
+
+  togglePlayButton() {
+    this.#playButton.classList.toggle("hidden");
   }
 
   #fillBoard(rowNum, colNum) {
@@ -53,37 +57,31 @@ class BoardView {
     return document.getElementById(this.#getBoxId(arr));
   }
 
-  togglePlayButton() {
-    this.#playButton.classList.toggle("hidden");
-  }
-
   /**
    * Renders a snake on the board.
-   * @param {{head: [row: number, column: number], body: [row: number, column: number][]}} snake An object containing a snake.
+   * @param {{head: [row: number, column: number], body: [row: number, column: number][], tail: [row: number, column: number]}} snake An object containing a snake.
    */
   #renderSnake(snake) {
     this.#data.snake = snake;
 
     this.#getBox(this.#data.snake.head).classList.add("snake__head");
 
-    this.#data.snake.body
-      .map(arr => this.#getBox(arr))
-      .forEach(box => box.classList.add("snake"));
+    this.#setClass(this.#data.snake.body, "snake");
+
+    this.#getBox(this.#data.snake.tail)?.classList.add("snake");
   }
 
   /**
    * Renders an array of foods on the board.
-   * @param {Set<[row: number, column: number]>} foods The foods to render.
+   * @param {Set<String>} foods The foods to render.
    */
   #renderFood(foods) {
-    Array.from(foods)
-      .map(arr => this.#getBox(arr))
-      .forEach(box => box.classList.add("food"));
+    this.#setClass(Array.from(foods), "food");
   }
 
   /**
    * @param {{
-   *  snake: {head: [row: Number, column: Number], body:[row: Number, column: Number][]}, foods: [row: number, column: number][]
+   *  snake: {head: [row: Number, column: Number], body:[row: Number, column: Number][], tail: [row: number, column: number]}, foods: Set<String>
    * }} board
    */
   renderBoard(board) {
@@ -96,6 +94,17 @@ class BoardView {
     Array.from(this.#parentElement.querySelectorAll(".box")).forEach(b =>
       this.#emptyBox(b)
     );
+  }
+
+  /**
+   * Sets the class of each element in an array of box-like strings.
+   * @param {String[]} arr
+   * @param {String} clazz
+   */
+  #setClass(arr, clazz) {
+    arr
+      .map(str => this.#getBox(parseBox(str)))
+      .forEach(box => box.classList.add(clazz));
   }
 
   /**

@@ -4,8 +4,7 @@ import { randomInt } from "./helper.js";
 import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
 
 function handleStartGame() {
-  model.initSnake();
-  model.spawnFood();
+  model.initGame();
 
   boardView.renderBoard(model.state.board);
   boardView.togglePlayButton();
@@ -58,10 +57,16 @@ function move(snake, dir) {
       break;
   }
 
-  snake.head[indexToMov] += addend;
+  headCopy[indexToMov] += addend;
 
-  if (isFood(snake.head)) {
-    model.SNAKE.body.push(headCopy);
+  if (!isFood(headCopy)) {
+    model.shiftSnakeBody(headCopy);
+  } else {
+    console.log("FOUND FOOD");
+
+    model.removeFood(headCopy);
+    model.growSnake(headCopy);
+    model.spawnFood();
   }
 }
 
@@ -70,7 +75,14 @@ function move(snake, dir) {
  * @param {[row: number, box: number]} box
  * @returns A boolean.
  */
-const isFood = box => model.FOODS.has(box);
+const isFood = box => model.FOODS.has("" + box);
+
+/**
+ * Determines whether or not the box at {@link box} contains a snake.
+ * @param {[row: number, box: number]} box
+ * @returns A boolean.
+ */
+const isSnakeBody = box => model.SNAKE.body.includes("" + box);
 
 function endGame() {
   console.error("GAME ENDED");

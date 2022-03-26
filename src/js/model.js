@@ -1,10 +1,10 @@
 import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
-import { randomInt, getRandomElement } from "./helper.js";
+import { randomInt, getRandomElement, parseBox } from "./helper.js";
 
 export const state = {
   board: {
     /**
-     * @type {{head: [row: Number, column: Number], body:[row: Number, column: Number][]}}
+     * @type {{head: [row: Number, column: Number], body:[row: Number, column: Number][], tail:[row: Number, column: Number]}}
      */
     snake: {},
     foods: new Set(),
@@ -94,7 +94,7 @@ function markGridSpace(space, markAsEmpty = false) {
 /**
  * Initializes a snake into {@link state.board.snake}
  */
-export function initSnake() {
+function initSnake() {
   SNAKE.head = getRandomGridSpace({
     fromLeft: 2,
     fromRight: 2,
@@ -102,15 +102,60 @@ export function initSnake() {
     fromBottom: 2,
   });
   SNAKE.body = [];
+  SNAKE.tail = [];
 }
 
 export function spawnFood() {
   const box = getRandomGridSpace();
-  FOODS.add(box);
+  FOODS.add("" + box);
   return box;
+}
+
+export function initGame() {
+  initSnake();
+  spawnFood();
 }
 
 /**
  * @param {[row: number, column: number]} box
  */
-export const removeFood = box => FOODS.delete(box);
+export const removeFood = box => FOODS.delete("" + box);
+
+/**
+ * Extends the snake by one unit, shifting the current head to the position specified by {@link newHead}
+ * @param {[row: number, column: number]} newHead
+ */
+export function growSnake(newHead) {
+  const oldHead = SNAKE.head;
+
+  SNAKE.head = newHead;
+  if (SNAKE.tail.length === 0) SNAKE.tail = oldHead;
+  else pushIntoSnakeBody(oldHead);
+
+  console.log(SNAKE);
+}
+
+/**
+ * @param {[row: number, column: number]} newHead
+ */
+export function shiftSnakeBody(newHead) {
+  const oldHead = SNAKE.head;
+  SNAKE.head = newHead;
+
+  if (SNAKE.tail.length === 0 && SNAKE.body.length === 0) return;
+
+  if (SNAKE.body.length === 0) {
+    SNAKE.tail = oldHead;
+    return;
+  }
+
+  pushIntoSnakeBody(oldHead);
+  SNAKE.tail = parseBox(SNAKE.body.splice(0, 1)[0]);
+}
+/**
+ * Use this instead of {@link SNAKE.body.push}
+ * @param {[row: number, column: number]} box
+ */
+function pushIntoSnakeBody(box) {
+  SNAKE.body.push("" + box);
+}
