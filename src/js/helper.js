@@ -5,4 +5,4 @@ export const randomInt = (min, max) =>
  * @param {Array} arr An array
  * @returns A random element of {@link arr}
  */
-export const getRandomElement = arr => arr[randomInt(0, arr.length)];
+export const getRandomElement = arr => arr[randomInt(0, arr.length - 1)];

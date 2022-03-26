@@ -5,13 +5,13 @@ import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
 
 function handleStartGame() {
   model.initSnake();
+  model.spawnFood();
 
-  boardView.renderSnake(model.SNAKE);
+  boardView.renderBoard(model.state.board);
   boardView.togglePlayButton();
 }
 
 function handleMovement(e) {
-  boardView.renderSnake(model.SNAKE, true);
   switch (e.key) {
     case "w":
     case "ArrowUp":
@@ -30,31 +30,47 @@ function handleMovement(e) {
       move(model.SNAKE, "right");
       break;
   }
-  boardView.renderSnake(model.SNAKE);
+  boardView.renderBoard(model.state.board);
 }
 
 function move(snake, dir) {
   const [row, col] = snake.head;
+  const headCopy = [row, col];
+  let indexToMov = 0;
+  let addend = -1;
 
   switch (dir) {
     case "up":
       if (row - 1 < 1) return endGame();
-      snake.head[0]--;
       break;
     case "left":
       if (col - 1 < 1) return endGame();
-      snake.head[1]--;
+      indexToMov = 1;
       break;
     case "down":
       if (row + 1 > ROW_COUNT) return endGame();
-      snake.head[0]++;
+      addend = 1;
       break;
     case "right":
       if (col + 1 > COLUMN_COUNT) return endGame();
-      snake.head[1]++;
+      indexToMov = 1;
+      addend = 1;
       break;
   }
+
+  snake.head[indexToMov] += addend;
+
+  if (isFood(snake.head)) {
+    model.SNAKE.body.push(headCopy);
+  }
 }
+
+/**
+ * Determines whether or not the box at {@link box} contains food.
+ * @param {[row: number, box: number]} box
+ * @returns A boolean.
+ */
+const isFood = box => model.FOODS.has(box);
 
 function endGame() {
   console.error("GAME ENDED");

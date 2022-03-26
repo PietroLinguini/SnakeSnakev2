@@ -1,2 +1,2 @@
-export const ROW_COUNT = 10;
-export const COLUMN_COUNT = 100;
+export const ROW_COUNT = 15;
+export const COLUMN_COUNT = 15;

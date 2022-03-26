@@ -1,10 +1,18 @@
 import { ROW_COUNT, COLUMN_COUNT } from "../config.js";
 import { randomInt } from "../helper.js";
 
+const BOX_CLASSES = ["snake__head", "snake", "food"];
+
 class BoardView {
   #parentElement = document.querySelector(".board");
   #playButtonContainer = document.querySelector(".play-button__container");
   #playButton = document.querySelector(".play-button");
+  #data = {
+    snake: {
+      head: {},
+      body: [],
+    },
+  };
 
   constructor() {
     this.#fillBoard(ROW_COUNT, COLUMN_COUNT);
@@ -41,8 +49,8 @@ class BoardView {
     return `box__${arr[0]}-${arr[1]}`;
   }
 
-  #getBox(row, col) {
-    return document.getElementById(`box__${row}-${col}`);
+  #getBox(arr) {
+    return document.getElementById(this.#getBoxId(arr));
   }
 
   togglePlayButton() {
@@ -50,20 +58,63 @@ class BoardView {
   }
 
   /**
-   * Renders a snake on the board. If {@link clear} is set to true, it will clear a pre-existing snake instead.
-   * @param {{head: [row: number, column: number], body: number[]}} snake An object containing a snake.
-   * @param {boolean} clear A boolean determining whether to render a snake or clear a pre-existing snake. False by default.
+   * Renders a snake on the board.
+   * @param {{head: [row: number, column: number], body: [row: number, column: number][]}} snake An object containing a snake.
    */
-  renderSnake(snake, clear = false) {
-    console.log(snake);
-    const boxes = [snake.head];
-    boxes
-      .map(arr => this.#getBoxId(arr))
-      .forEach(b => {
-        const box = document.getElementById(b);
-        if (clear) box.classList.remove("snake__head");
-        else box.classList.add("snake__head");
-      });
+  #renderSnake(snake) {
+    this.#data.snake = snake;
+
+    this.#getBox(this.#data.snake.head).classList.add("snake__head");
+
+    this.#data.snake.body
+      .map(arr => this.#getBox(arr))
+      .forEach(box => box.classList.add("snake"));
+  }
+
+  /**
+   * Renders an array of foods on the board.
+   * @param {Set<[row: number, column: number]>} foods The foods to render.
+   */
+  #renderFood(foods) {
+    Array.from(foods)
+      .map(arr => this.#getBox(arr))
+      .forEach(box => box.classList.add("food"));
+  }
+
+  /**
+   * @param {{
+   *  snake: {head: [row: Number, column: Number], body:[row: Number, column: Number][]}, foods: [row: number, column: number][]
+   * }} board
+   */
+  renderBoard(board) {
+    this.#clearBoard();
+    this.#renderSnake(board.snake);
+    this.#renderFood(board.foods);
+  }
+
+  #clearBoard() {
+    Array.from(this.#parentElement.querySelectorAll(".box")).forEach(b =>
+      this.#emptyBox(b)
+    );
+  }
+
+  /**
+   * "Empties" a box; specifically, it clears the box of any classes listed in {@link BOX_CLASSES}.
+   * @param {Element} box An HTML element.
+   */
+  #emptyBox(box) {
+    BOX_CLASSES.forEach(clazz => box.classList.remove(clazz));
+  }
+
+  /**
+   * Renders a food on the board. If {@link clear} is set to true, it will clear a pre-existing food instead.
+   * @param {[row: number, column: number]} space The row and column to render as food.
+   * @param {boolean} clear Determines whether to render a food or clear a pre-existing food. False by default.
+   */
+  renderFood(space, clear = false) {
+    const box = this.#getBox(space);
+    if (!clear) box.classList.add("food");
+    else box.classList.remove("food");
   }
 }
 
