@@ -8,7 +8,7 @@ export const randomInt = (min, max) =>
 export const getRandomElement = arr => arr[randomInt(0, arr.length - 1)];
 
 /**
- * Used to convert a string to a box-like array.
+ * Used to convert a string to a box-like array. Always use when getting an element from the body of a snake.
  * @param {String} str The string to convert.
  * @returns {[row: number, column: number]} The array constructed from {@link str}.
  */

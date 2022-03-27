@@ -1,7 +1,7 @@
 import boardView from "./views/boardView.js";
 import * as model from "./model.js";
 import { randomInt } from "./helper.js";
-import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
+import { ROW_COUNT, COLUMN_COUNT, MOVEMENT_INTERVAL_MS } from "./config.js";
 
 function handleStartGame() {
   model.initGame();
@@ -10,8 +10,36 @@ function handleStartGame() {
   boardView.togglePlayButton();
 }
 
+let currentDir;
+let moveInterval;
 function handleMovement(e) {
-  switch (e.key) {
+  console.log(model.SNAKE.tail.length);
+  if (
+    (((currentDir === "w" || currentDir === "ArrowUp") &&
+      (e.key === "s" || e.key === "ArrowDown")) ||
+      ((currentDir === "a" || currentDir === "ArrowLeft") &&
+        (e.key === "d" || e.key === "ArrowRight")) ||
+      ((currentDir === "s" || currentDir === "ArrowDown") &&
+        (e.key === "w" || e.key === "ArrowUp")) ||
+      ((currentDir === "d" || currentDir === "ArrowRight") &&
+        (e.key === "a" || e.key === "ArrowLeft"))) &&
+    model.SNAKE.tail.length !== 0
+  )
+    return;
+
+  currentDir = e.key;
+
+  doMove(currentDir);
+  clearInterval(moveInterval);
+  moveInterval = setInterval(() => {
+    doMove(currentDir);
+  }, MOVEMENT_INTERVAL_MS);
+}
+
+function doMove(dir) {
+  if (!dir) return;
+
+  switch (dir) {
     case "w":
     case "ArrowUp":
       move(model.SNAKE, "up");
@@ -28,7 +56,11 @@ function handleMovement(e) {
     case "ArrowRight":
       move(model.SNAKE, "right");
       break;
+    case "l":
+      console.log(model.emptySpaces);
+      break;
   }
+
   boardView.renderBoard(model.state.board);
 }
 
@@ -40,18 +72,14 @@ function move(snake, dir) {
 
   switch (dir) {
     case "up":
-      if (row - 1 < 1) return endGame();
       break;
     case "left":
-      if (col - 1 < 1) return endGame();
       indexToMov = 1;
       break;
     case "down":
-      if (row + 1 > ROW_COUNT) return endGame();
       addend = 1;
       break;
     case "right":
-      if (col + 1 > COLUMN_COUNT) return endGame();
       indexToMov = 1;
       addend = 1;
       break;
@@ -59,33 +87,19 @@ function move(snake, dir) {
 
   headCopy[indexToMov] += addend;
 
-  if (!isFood(headCopy)) {
+  if (!model.isFood(headCopy)) {
+    if (!model.isEmptySpace(headCopy)) return endGame();
     model.shiftSnakeBody(headCopy);
   } else {
-    console.log("FOUND FOOD");
-
     model.removeFood(headCopy);
     model.growSnake(headCopy);
     model.spawnFood();
   }
 }
 
-/**
- * Determines whether or not the box at {@link box} contains food.
- * @param {[row: number, box: number]} box
- * @returns A boolean.
- */
-const isFood = box => model.FOODS.has("" + box);
-
-/**
- * Determines whether or not the box at {@link box} contains a snake.
- * @param {[row: number, box: number]} box
- * @returns A boolean.
- */
-const isSnakeBody = box => model.SNAKE.body.includes("" + box);
-
 function endGame() {
   console.error("GAME ENDED");
+  clearInterval(moveInterval);
 }
 
 function init() {

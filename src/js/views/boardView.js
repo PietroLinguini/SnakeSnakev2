@@ -31,7 +31,6 @@ class BoardView {
   }
 
   #fillBoard(rowNum, colNum) {
-    console.log(`row: ${ROW_COUNT}, columns: ${COLUMN_COUNT}`);
     for (let i = 0; i < rowNum; i++) {
       for (let k = 0; k < colNum; k++) {
         const box = document.createElement("div");
@@ -41,7 +40,6 @@ class BoardView {
         this.#parentElement.appendChild(box);
       }
     }
-    console.log("BOARD FILLED");
   }
 
   /**
@@ -53,7 +51,10 @@ class BoardView {
     return `box__${arr[0]}-${arr[1]}`;
   }
 
-  #getBox(arr) {
+  /**
+   * @param {[row: number, column: number]} arr
+   */
+  getBox(arr) {
     return document.getElementById(this.#getBoxId(arr));
   }
 
@@ -64,11 +65,11 @@ class BoardView {
   #renderSnake(snake) {
     this.#data.snake = snake;
 
-    this.#getBox(this.#data.snake.head).classList.add("snake__head");
+    this.getBox(this.#data.snake.head).classList.add("snake__head");
 
     this.#setClass(this.#data.snake.body, "snake");
 
-    this.#getBox(this.#data.snake.tail)?.classList.add("snake");
+    this.getBox(this.#data.snake.tail)?.classList.add("snake");
   }
 
   /**
@@ -103,7 +104,7 @@ class BoardView {
    */
   #setClass(arr, clazz) {
     arr
-      .map(str => this.#getBox(parseBox(str)))
+      .map(str => this.getBox(parseBox(str)))
       .forEach(box => box.classList.add(clazz));
   }
 
@@ -121,7 +122,7 @@ class BoardView {
    * @param {boolean} clear Determines whether to render a food or clear a pre-existing food. False by default.
    */
   renderFood(space, clear = false) {
-    const box = this.#getBox(space);
+    const box = this.getBox(space);
     if (!clear) box.classList.add("food");
     else box.classList.remove("food");
   }
