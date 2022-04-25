@@ -1,6 +1,8 @@
 import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
 import { randomInt, getRandomElement, parseBox } from "./helper.js";
+import GameState from "./GameState.js";
 
+let gameState = GameState.Menu;
 export const state = {
   board: {
     /**
@@ -9,16 +11,12 @@ export const state = {
     snake: {},
     foods: new Set(),
   },
+  gameState() {
+    return gameState;
+  },
 };
 
 export const { snake: SNAKE, foods: FOODS } = state.board;
-
-/**
- * @type {[rows: number[]]}
- */
-export const emptySpaces = Array(ROW_COUNT)
-  .fill(1) // Used to fill the array's indices with, 1 could be any value
-  .map(_ => [...Array(COLUMN_COUNT).keys()].map(i => i + 1));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,6 +25,13 @@ export const emptySpaces = Array(ROW_COUNT)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @type {[rows: number[]]}
+ */
+export const emptySpaces = Array(ROW_COUNT)
+  .fill(1) // Used to fill the array's indices with, 1 could be any value
+  .map(_ => [...Array(COLUMN_COUNT).keys()].map(i => i + 1));
 
 /**
  * @param {Number} fromTop How far the top margin should be from the top. 0 by default.
@@ -65,7 +70,9 @@ function getRandomGridSpace({
 
   if (empty) {
     const row = getRandomElement(
-      Array.from(emptySpaces.keys()).slice(fromTop, ROW_COUNT - fromBottom)
+      Array.from(emptySpaces.keys())
+        .slice(fromTop, ROW_COUNT - fromBottom)
+        .filter(r => emptySpaces[r].length > 0)
     );
 
     const column = getRandomElement(
@@ -79,7 +86,6 @@ function getRandomGridSpace({
       getRandomColumn(fromLeft, fromRight),
     ];
 
-  console.log("GOT RANDOM GRID SPACE");
   if (mark) markGridSpace(space);
   return space;
 }
@@ -115,7 +121,14 @@ function markGridSpace(space, markAsEmpty = false) {
 export function initGame() {
   initSnake();
   spawnFood();
-  console.log(emptySpaces);
+  changeGameState(GameState.Playing);
+}
+
+/**
+ * @param {GameState} newGameState
+ */
+export function changeGameState(newGameState) {
+  if (newGameState instanceof GameState) gameState = newGameState;
 }
 
 export function spawnFood() {

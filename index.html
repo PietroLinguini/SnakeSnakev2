@@ -4,18 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="src/styles.css" />
     <script defer type="module" src="src/js/handler.js"></script>
 
-    <title>Snakey Snake!</title>
+    <title>Snakey Snak e!</title>
   </head>
   <body>
     <main>
       <div class="board">
-        <div class="play-button__container">
-          <button class="play-button">PLAY</button>
+        <div class="container--menu">
+          <div class="container--play-button">
+            <button class="btn play-button">PLAY</button>
+          </div>
+          <div class="container--settings">
+            <div class="setting setting--tempo">
+              <span class="setting--label setting--label--tempo">Tempo</span>
+              <div class="setting--input setting--input--tempo">
+                <button class="setting--btn setting--btn--left">ᐊ</button>
+                <div class="setting--options">
+                  <span class="setting--option">Slow</span>
+                  <span class="setting--option">Medium</span>
+                  <span class="setting--option">Fast</span>
+                </div>
+                <button class="setting--btn setting--btn--right">ᐅ</button>
+              </div>
+            </div>
+            <div class="setting setting--size">
+              <span class="setting--label setting--label--size"
+                >Board Size</span
+              >
+              <div class="setting--input setting--input--size">
+                <button class="setting--btn setting--btn--left">ᐊ</button>
+                <div class="setting--options">
+                  <span class="setting--option">Small</span>
+                  <span class="setting--option">Medium</span>
+                  <span class="setting--option">Large</span>
+                </div>
+                <button class="setting--btn setting--btn--right">ᐅ</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <div id="stats"></div>
     </main>
   </body>
 </html>

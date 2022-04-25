@@ -1,21 +1,21 @@
 import boardView from "./views/boardView.js";
+import menuView from "./views/menuView.js";
 import * as model from "./model.js";
 import { randomInt } from "./helper.js";
 import { ROW_COUNT, COLUMN_COUNT, MOVEMENT_INTERVAL_MS } from "./config.js";
+import GameState from "./GameState.js";
 
 function handleStartGame() {
   model.initGame();
 
-  boardView.renderBoard(model.state.board);
-  boardView.togglePlayButton();
+  boardView.initBoard(model.state.board);
 }
 
 let currentDir;
 let moveInterval;
 function handleMovement(e) {
-  console.log(model.SNAKE.tail.length);
   if (
-    (((currentDir === "w" || currentDir === "ArrowUp") &&
+    ((((currentDir === "w" || currentDir === "ArrowUp") &&
       (e.key === "s" || e.key === "ArrowDown")) ||
       ((currentDir === "a" || currentDir === "ArrowLeft") &&
         (e.key === "d" || e.key === "ArrowRight")) ||
@@ -23,7 +23,8 @@ function handleMovement(e) {
         (e.key === "w" || e.key === "ArrowUp")) ||
       ((currentDir === "d" || currentDir === "ArrowRight") &&
         (e.key === "a" || e.key === "ArrowLeft"))) &&
-    model.SNAKE.tail.length !== 0
+      model.SNAKE.tail.length !== 0) ||
+    model.state.gameState() != GameState.Playing
   )
     return;
 
@@ -103,7 +104,7 @@ function endGame() {
 }
 
 function init() {
-  boardView.addHandlerStartGame(handleStartGame);
+  menuView.addHandlerStartGame(handleStartGame);
   boardView.addHandlerMovement(handleMovement);
 }
 init();

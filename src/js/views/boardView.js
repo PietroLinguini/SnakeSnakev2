@@ -5,8 +5,6 @@ const BOX_CLASSES = ["snake__head", "snake", "food"];
 
 class BoardView {
   #parentElement = document.querySelector(".board");
-  #playButtonContainer = document.querySelector(".play-button__container");
-  #playButton = document.querySelector(".play-button");
   #data = {
     snake: {
       head: {},
@@ -14,20 +12,12 @@ class BoardView {
     },
   };
 
-  constructor() {
-    this.#fillBoard(ROW_COUNT, COLUMN_COUNT);
-  }
-
-  addHandlerStartGame(handler) {
-    this.#playButton.addEventListener("click", handler);
+  #styleBoard(prop, val) {
+    this.#parentElement.style[prop] = val;
   }
 
   addHandlerMovement(handler) {
     document.addEventListener("keydown", handler);
-  }
-
-  togglePlayButton() {
-    this.#playButton.classList.toggle("hidden");
   }
 
   #fillBoard(rowNum, colNum) {
@@ -36,6 +26,7 @@ class BoardView {
         const box = document.createElement("div");
         box.setAttribute("id", `box__${i + 1}-${k + 1}`);
         box.classList.add("box");
+        box.style.zIndex = "-9990";
         box.style.gridArea = `${i + 1} / ${k + 1} / span 1 / span 1`;
         this.#parentElement.appendChild(box);
       }
@@ -54,7 +45,7 @@ class BoardView {
   /**
    * @param {[row: number, column: number]} arr
    */
-  getBox(arr) {
+  #getBox(arr) {
     return document.getElementById(this.#getBoxId(arr));
   }
 
@@ -65,11 +56,11 @@ class BoardView {
   #renderSnake(snake) {
     this.#data.snake = snake;
 
-    this.getBox(this.#data.snake.head).classList.add("snake__head");
+    this.#getBox(this.#data.snake.head).classList.add("snake__head");
 
     this.#setClass(this.#data.snake.body, "snake");
 
-    this.getBox(this.#data.snake.tail)?.classList.add("snake");
+    this.#getBox(this.#data.snake.tail)?.classList.add("snake");
   }
 
   /**
@@ -78,6 +69,16 @@ class BoardView {
    */
   #renderFood(foods) {
     this.#setClass(Array.from(foods), "food");
+  }
+
+  initBoard(board) {
+    this.#styleBoard("border", "2px solid var(--board-border-color)");
+    this.#styleBoard("boxShadow", "0 0 4.8rem 0.8rem var(--btn-border-color)");
+    this.#styleBoard("width", "90vh");
+    this.#styleBoard("height", "90vh");
+    this.#clearBoard();
+    this.#fillBoard(ROW_COUNT, COLUMN_COUNT);
+    this.renderBoard(board);
   }
 
   /**
@@ -104,7 +105,7 @@ class BoardView {
    */
   #setClass(arr, clazz) {
     arr
-      .map(str => this.getBox(parseBox(str)))
+      .map(str => this.#getBox(parseBox(str)))
       .forEach(box => box.classList.add(clazz));
   }
 
@@ -122,7 +123,7 @@ class BoardView {
    * @param {boolean} clear Determines whether to render a food or clear a pre-existing food. False by default.
    */
   renderFood(space, clear = false) {
-    const box = this.getBox(space);
+    const box = this.#getBox(space);
     if (!clear) box.classList.add("food");
     else box.classList.remove("food");
   }
