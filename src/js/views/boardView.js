@@ -72,10 +72,10 @@ class BoardView {
   }
 
   initBoard(board) {
-    this.#styleBoard("border", "2px solid var(--board-border-color)");
+    this.#styleBoard("border", "2px solid var(--border-color-primary)");
     this.#styleBoard("boxShadow", "0 0 4.8rem 0.8rem var(--btn-border-color)");
-    this.#styleBoard("width", "90vh");
-    this.#styleBoard("height", "90vh");
+    this.#styleBoard("width", "80vh");
+    this.#styleBoard("height", "80vh");
     this.#clearBoard();
     this.#fillBoard(ROW_COUNT, COLUMN_COUNT);
     this.renderBoard(board);

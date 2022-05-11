@@ -1,14 +1,32 @@
 import boardView from "./views/boardView.js";
 import menuView from "./views/menuView.js";
+import titleView from "./views/titleView.js";
 import * as model from "./model.js";
 import { randomInt } from "./helper.js";
 import { ROW_COUNT, COLUMN_COUNT, MOVEMENT_INTERVAL_MS } from "./config.js";
 import GameState from "./GameState.js";
 
+function handleSettingScroll(e, setting) {
+  const btn = e.target;
+  const isLeft = btn.classList.contains("setting--btn--left");
+
+  let optionIndex = model.state.settings[setting.getName()];
+  optionIndex = isLeft
+    ? optionIndex === 0
+      ? setting.getNumOptions() - 1
+      : optionIndex - 1
+    : optionIndex === setting.getNumOptions() - 1
+    ? 0
+    : optionIndex + 1;
+  setting.scroll(optionIndex);
+  model.state.settings[setting.getName()] = optionIndex;
+}
+
 function handleStartGame() {
   model.initGame();
 
   boardView.initBoard(model.state.board);
+  titleView.fadeOut();
 }
 
 let currentDir;
@@ -105,6 +123,7 @@ function endGame() {
 
 function init() {
   menuView.addHandlerStartGame(handleStartGame);
+  menuView.addHandlerScroll(handleSettingScroll);
   boardView.addHandlerMovement(handleMovement);
 }
 init();

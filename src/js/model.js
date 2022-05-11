@@ -14,6 +14,10 @@ export const state = {
   gameState() {
     return gameState;
   },
+  settings: {
+    tempo: 0,
+    size: 0,
+  },
 };
 
 export const { snake: SNAKE, foods: FOODS } = state.board;
@@ -119,9 +123,9 @@ function markGridSpace(space, markAsEmpty = false) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function initGame() {
+  changeGameState(GameState.Playing);
   initSnake();
   spawnFood();
-  changeGameState(GameState.Playing);
 }
 
 /**

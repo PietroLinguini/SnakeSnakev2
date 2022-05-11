@@ -14,9 +14,17 @@
     <link rel="stylesheet" href="src/styles.css" />
     <script defer type="module" src="src/js/handler.js"></script>
 
-    <title>Snakey Snak e!</title>
+    <title>Snakey Snake!</title>
   </head>
   <body>
+    <head>
+      <div class="container--title">
+        <span class="title"
+          ><span class="title--capital">S</span>NAKEY
+          <span class="title--capital">S</span>NAKE</span
+        >
+      </div>
+    </head>
     <main>
       <div class="board">
         <div class="container--menu">
@@ -28,10 +36,12 @@
               <span class="setting--label setting--label--tempo">Tempo</span>
               <div class="setting--input setting--input--tempo">
                 <button class="setting--btn setting--btn--left">ᐊ</button>
-                <div class="setting--options">
-                  <span class="setting--option">Slow</span>
-                  <span class="setting--option">Medium</span>
-                  <span class="setting--option">Fast</span>
+                <div class="setting--options--container">
+                  <div class="setting--options" data-num-options="3">
+                    <span class="setting--option">Slow</span>
+                    <span class="setting--option">Medium</span>
+                    <span class="setting--option">Fast</span>
+                  </div>
                 </div>
                 <button class="setting--btn setting--btn--right">ᐅ</button>
               </div>
@@ -42,10 +52,12 @@
               >
               <div class="setting--input setting--input--size">
                 <button class="setting--btn setting--btn--left">ᐊ</button>
-                <div class="setting--options">
-                  <span class="setting--option">Small</span>
-                  <span class="setting--option">Medium</span>
-                  <span class="setting--option">Large</span>
+                <div class="setting--options--container">
+                  <div class="setting--options" data-num-options="3">
+                    <span class="setting--option">Small</span>
+                    <span class="setting--option">Medium</span>
+                    <span class="setting--option">Large</span>
+                  </div>
                 </div>
                 <button class="setting--btn setting--btn--right">ᐅ</button>
               </div>
