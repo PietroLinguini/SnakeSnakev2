@@ -1,4 +1,4 @@
-import { ROW_COUNT, COLUMN_COUNT } from "../config.js";
+import { getter as configGetter } from "../config.js";
 import { parseBox } from "../helper.js";
 
 const BOX_CLASSES = ["snake__head", "snake", "food"];
@@ -77,7 +77,7 @@ class BoardView {
     this.#styleBoard("width", "80vh");
     this.#styleBoard("height", "80vh");
     this.#clearBoard();
-    this.#fillBoard(ROW_COUNT, COLUMN_COUNT);
+    this.#fillBoard(configGetter.rowCount(), configGetter.colCount());
     this.renderBoard(board);
   }
 

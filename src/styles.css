@@ -208,7 +208,7 @@ main {
 
 .setting--options {
   display: grid;
-  grid-template-columns: repeat(3, var(--setting-input-size));
+  grid-template-columns: repeat(100, var(--setting-input-size));
   text-align: center;
   padding: 1.2rem 0;
   z-index: -9991;

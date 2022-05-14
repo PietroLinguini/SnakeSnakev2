@@ -1,5 +1,3 @@
-import { ROW_COUNT, COLUMN_COUNT } from "../config.js";
-
 class MenuView {
   #parentElement = document.querySelector(".container--menu");
   #playButton = document.querySelector(".play-button");

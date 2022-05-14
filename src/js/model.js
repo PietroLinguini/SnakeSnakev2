@@ -1,4 +1,4 @@
-import { ROW_COUNT, COLUMN_COUNT } from "./config.js";
+import { getter as getSetting, setter as setSetting } from "./config.js";
 import { randomInt, getRandomElement, parseBox } from "./helper.js";
 import GameState from "./GameState.js";
 
@@ -14,11 +14,34 @@ export const state = {
   gameState() {
     return gameState;
   },
-  settings: {
-    tempo: 0,
-    size: 0,
-  },
+  settings: {},
 };
+
+class Setting {
+  #name;
+  #index;
+
+  /**
+   * @param {String} name The name of this setting. Should equal the setting that it corresponds to in config.js.
+   * @param {Number} startIndex
+   */
+  constructor(name, startIndex = 0) {
+    this.#name = name;
+    this.#index = startIndex;
+    state.settings[name] = this;
+  }
+
+  getIndex() {
+    return this.#index;
+  }
+
+  setIndex(index) {
+    this.#index = index;
+    setSetting[this.#name](index);
+  }
+}
+new Setting("tempo");
+new Setting("size");
 
 export const { snake: SNAKE, foods: FOODS } = state.board;
 
@@ -33,9 +56,13 @@ export const { snake: SNAKE, foods: FOODS } = state.board;
 /**
  * @type {[rows: number[]]}
  */
-export const emptySpaces = Array(ROW_COUNT)
-  .fill(1) // Used to fill the array's indices with, 1 could be any value
-  .map(_ => [...Array(COLUMN_COUNT).keys()].map(i => i + 1));
+export let emptySpaces;
+
+function setEmptySpace() {
+  emptySpaces = Array(getSetting.rowCount())
+    .fill(1) // Used to fill the array's indices with, 1 could be any value
+    .map(_ => [...Array(getSetting.colCount()).keys()].map(i => i + 1));
+}
 
 /**
  * @param {Number} fromTop How far the top margin should be from the top. 0 by default.
@@ -43,7 +70,7 @@ export const emptySpaces = Array(ROW_COUNT)
  * @returns A random valid row from the board within the bottom and top margins.
  */
 const getRandomRow = (fromTop = 0, fromBottom = 0) =>
-  randomInt(1 + fromTop, ROW_COUNT - fromBottom);
+  randomInt(1 + fromTop, getSetting.rowCount() - fromBottom);
 
 /**
  * @param {Number} fromLeft How far the left margin should be from the left. 0 by default.
@@ -51,7 +78,7 @@ const getRandomRow = (fromTop = 0, fromBottom = 0) =>
  * @returns A random valid column from the board within the left and right margins.
  */
 const getRandomColumn = (fromLeft = 0, fromRight = 0) =>
-  randomInt(1 + fromLeft, COLUMN_COUNT - fromRight);
+  randomInt(1 + fromLeft, getSetting.colCount() - fromRight);
 
 /**
  * @param {Number} fromLeft How far the left margin should be from the left. 0 by default.
@@ -75,12 +102,12 @@ function getRandomGridSpace({
   if (empty) {
     const row = getRandomElement(
       Array.from(emptySpaces.keys())
-        .slice(fromTop, ROW_COUNT - fromBottom)
+        .slice(fromTop, getSetting.rowCount() - fromBottom)
         .filter(r => emptySpaces[r].length > 0)
     );
 
     const column = getRandomElement(
-      emptySpaces[row].slice(fromLeft, COLUMN_COUNT - fromRight)
+      emptySpaces[row].slice(fromLeft, getSetting.colCount() - fromRight)
     );
 
     space = [row + 1, column];
@@ -124,6 +151,8 @@ function markGridSpace(space, markAsEmpty = false) {
 
 export function initGame() {
   changeGameState(GameState.Playing);
+
+  setEmptySpace();
   initSnake();
   spawnFood();
 }
@@ -251,7 +280,10 @@ export const isFood = box => FOODS.has("" + box);
  * @returns A boolean.
  */
 const isSpaceInBounds = box =>
-  box[0] > 0 && box[0] <= ROW_COUNT && box[1] > 0 && box[1] <= COLUMN_COUNT;
+  box[0] > 0 &&
+  box[0] <= getSetting.rowCount() &&
+  box[1] > 0 &&
+  box[1] <= getSetting.colCount();
 
 /**
  * Determines whether or not the box at {@link box} is an empty space and within the bounds of the board.

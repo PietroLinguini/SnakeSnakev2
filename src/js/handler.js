@@ -3,14 +3,16 @@ import menuView from "./views/menuView.js";
 import titleView from "./views/titleView.js";
 import * as model from "./model.js";
 import { randomInt } from "./helper.js";
-import { ROW_COUNT, COLUMN_COUNT, MOVEMENT_INTERVAL_MS } from "./config.js";
+import { getter as getSetting, update as updateConfig } from "./config.js";
 import GameState from "./GameState.js";
+import * as helper from "./helper.js";
 
 function handleSettingScroll(e, setting) {
   const btn = e.target;
   const isLeft = btn.classList.contains("setting--btn--left");
+  const name = setting.getName();
 
-  let optionIndex = model.state.settings[setting.getName()];
+  let optionIndex = model.state.settings[name].getIndex();
   optionIndex = isLeft
     ? optionIndex === 0
       ? setting.getNumOptions() - 1
@@ -19,10 +21,11 @@ function handleSettingScroll(e, setting) {
     ? 0
     : optionIndex + 1;
   setting.scroll(optionIndex);
-  model.state.settings[setting.getName()] = optionIndex;
+  model.state.settings[name].setIndex(optionIndex);
 }
 
 function handleStartGame() {
+  updateConfig();
   model.initGame();
 
   boardView.initBoard(model.state.board);
@@ -52,7 +55,7 @@ function handleMovement(e) {
   clearInterval(moveInterval);
   moveInterval = setInterval(() => {
     doMove(currentDir);
-  }, MOVEMENT_INTERVAL_MS);
+  }, getSetting.tempo());
 }
 
 function doMove(dir) {
@@ -76,7 +79,6 @@ function doMove(dir) {
       move(model.SNAKE, "right");
       break;
     case "l":
-      console.log(model.emptySpaces);
       break;
   }
 
